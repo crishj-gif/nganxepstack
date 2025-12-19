@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tài liệu Ôn thi Ngăn xếp (Stack) - Kỹ thuật lập trình C</title>
+    <!-- Prism.js for Dracula Theme Syntax Highlighting -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --sidebar-bg: #f5f7f9;
+            --text-color: #24292e;
+            --border-color: #e1e4e8;
+            --primary-color: #0366d6;
+            --code-bg: #282a36; /* Dracula background */
+            --header-bg: #ffffff;
+            --mac-red: #ff5f56;
+            --mac-yellow: #ffbd2e;
+            --mac-green: #27c93f;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0d1117;
+            --sidebar-bg: #161b22;
+            --text-color: #c9d1d9;
+            --border-color: #30363d;
+            --primary-color: #58a6ff;
+            --header-bg: #0d1117;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background 0.3s;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .logo { font-weight: bold; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
+
+        /* Sidebar */
+        aside {
+            width: 280px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 80px 20px 20px;
+            position: fixed;
+            overflow-y: auto;
+            transition: transform 0.3s;
+        }
+
+        aside h3 { font-size: 0.9rem; text-transform: uppercase; color: #8b949e; margin-top: 25px; }
+        aside ul { list-style: none; padding: 0; }
+        aside li { margin: 8px 0; }
+        aside a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            display: block;
+            padding: 5px 10px;
+            border-radius: 6px;
+        }
+        aside a:hover { background: rgba(0,0,0,0.05); }
+        [data-theme="dark"] aside a:hover { background: rgba(255,255,255,0.05); }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            margin-left: 280px;
+            padding: 100px 40px 60px;
+            max-width: 900px;
+        }
+
+        section { margin-bottom: 60px; }
+        h1 { font-size: 2.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        h2 { font-size: 1.8rem; margin-top: 40px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; }
+        h3 { font-size: 1.3rem; margin-top: 30px; color: var(--primary-color); }
+
+        /* Code Block Wrapper with Mac Buttons */
+        .code-window {
+            background: var(--code-bg);
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .code-header {
+            background: #21222c;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .red { background-color: var(--mac-red); }
+        .yellow { background-color: var(--mac-yellow); }
+        .green { background-color: var(--mac-green); }
+
+        pre {
+            background: transparent !important;
+            margin: 0 !important;
+            padding: 15px !important;
+            overflow-x: auto;
+        }
+        code { font-family: "Fira Code", "Cascadia Code", Consolas, monospace !important; font-size: 14px; }
+        
+        .copy-btn {
+            position: absolute;
+            top: 7px;
+            right: 15px;
+            background: rgba(255,255,255,0.1);
+            color: #f8f8f2;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 2px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover { background: rgba(255,255,255,0.2); }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-right: 5px;
+            background: #e1e4e8;
+            color: #24292e;
+        }
+        .tag-hard { background: #ff4444; color: white; }
+        .tag-med { background: #ffbb33; color: white; }
+        .tag-easy { background: #00C851; color: white; }
+
+        .note {
+            background: #fff3cd;
+            border-left: 5px solid #ffecb5;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            color: #856404;
+        }
+        [data-theme="dark"] .note {
+            background: #1e1e13;
+            border-left: 5px solid #d4a017;
+            color: #d4a017;
+        }
+
+        .qa-box {
+            background: #f8f9fa;
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+        [data-theme="dark"] .qa-box { background: #1c2128; }
+        .question-text { font-weight: bold; color: var(--primary-color); display: block; margin-bottom: 5px; }
+
+        .theme-switch {
+            cursor: pointer;
+            padding: 8px 18px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 20px;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            aside { transform: translateX(-100%); width: 0; padding: 0; }
+            main { margin-left: 0; padding: 80px 20px; }
+        }
+        
+        .sc-contact-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 99999;
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 0;
+        }
+
+        .sc-footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sc-social-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+            transition: transform 0.3s;
+        }
+        .sc-social-btn:hover { transform: scale(1.1); }
+        .btn-phone { background: #4ade80; }
+        .btn-facebook { background: #18ACFE; }
+        .btn-tiktok { background: #000; border: 1px solid #fff; }
+        .btn-instagram { background: linear-gradient(45deg, #833ab4, #fd1d1d, #fcb045); }
+    </style>
+</head>
+<body data-theme="light">
+
+    <header>
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8 4 8-4M4 15l8 4 8-4M12 3l8 4-8 4-8-4 8-4z"/></svg>
+            <span>Stack Pro</span>
+        </div>
+        <button class="theme-switch" onclick="toggleTheme()">🌓 Chế độ sáng/tối</button>
+    </header>
+
+    <aside id="sidebar">
+        <h3>Kiến thức cơ bản</h3>
+        <ul>
+            <li><a href="#intro">Khái niệm & Nguyên lý</a></li>
+            <li><a href="#vandan">Câu hỏi Vấn đáp hay gặp</a></li>
+            <li><a href="#array-stack">Cài đặt Mảng</a></li>
+            <li><a href="#linked-stack">Cài đặt DSLK</a></li>
+        </ul>
+        <h3>Nhóm Bài tập 1: Cơ bản</h3>
+        <ul>
+            <li><a href="#group1-1">1.1. Thêm & Lấy dữ liệu</a></li>
+            <li><a href="#group1-2">1.2. Đảo chuỗi / Đảo mảng</a></li>
+        </ul>
+        <h3>Nhóm Bài tập 2: Ứng dụng thi</h3>
+        <ul>
+            <li><a href="#group2-1">2.1. Kiểm tra dấu ngoặc</a></li>
+            <li><a href="#group2-2">2.2. Đổi nhị phân</a></li>
+            <li><a href="#group2-3">2.3. Chuyển đổi biểu thức</a></li>
+        </ul>
+        <h3>Đề thi & Đáp án</h3>
+        <ul>
+            <li><a href="#exam-1">Đề thi số 01 (Có giải)</a></li>
+            <li><a href="#exam-2">Đề thi số 02 (Thực hành)</a></li>
+        </ul>
+    </aside>
+
+    <main>
+        <section id="intro">
+            <h1> Ngăn xếp (Stack)</h1>
+            <div class="note">
+                <strong>💡 Lưu ý quan trọng:</strong> Stack hoạt động theo cơ chế <strong>LIFO (Last In, First Out)</strong>. Nghĩa là phần tử nào vào sau cùng sẽ được lấy ra đầu tiên.
+            </div>
+        </section>
+
+        <section id="vandan">
+            <h2>📚 Câu hỏi Vấn đáp Lý thuyết (Thường gặp)</h2>
+            
+            <div class="qa-box">
+                <span class="question-text">Câu 1: Tại sao nói Stack là một danh sách hạn chế?</span>
+                <p><strong>Đáp án:</strong> Vì việc thêm và xóa phần tử chỉ được thực hiện tại một đầu duy nhất (gọi là đỉnh - Top). Ta không thể truy cập trực tiếp phần tử ở giữa hay cuối stack mà không lấy các phần tử bên trên ra.</p>
+            </div>
+
+            <div class="qa-box">
+                <span class="question-text">Câu 2: Phân biệt cơ chế hoạt động của Mảng và Stack?</span>
+                <p><strong>Đáp án:</strong> Mảng cho phép truy cập ngẫu nhiên (Index). Stack chỉ cho phép truy cập phần tử ở đỉnh (LIFO). Stack thường được cài đặt dựa trên Mảng hoặc Danh sách liên kết.</p>
+            </div>
+
+            <div class="qa-box">
+                <span class="question-text">Câu 3: Khi nào xảy ra lỗi Stack Overflow và Stack Underflow?</span>
+                <p><strong>Đáp án:</strong> 
+                    <br>- <strong>Overflow:</strong> Xảy ra khi đẩy (Push) phần tử vào Stack đã đầy (trong cài đặt bằng mảng).
+                    <br>- <strong>Underflow:</strong> Xảy ra khi lấy (Pop) hoặc xem (Peek) phần tử từ một Stack rỗng.
+                </p>
+            </div>
+
+            <div class="qa-box">
+                <span class="question-text">Câu 4: Ứng dụng thực tế của Stack là gì?</span>
+                <p><strong>Đáp án:</strong> 
+                    1. Quản lý gọi hàm (Function Call Stack) trong lập trình.
+                    2. Chức năng Undo/Redo trong các trình soạn thảo.
+                    3. Duyệt đồ thị (DFS).
+                    4. Chuyển đổi và tính toán biểu thức (Infix to Postfix).
+                </p>
+            </div>
+        </section>
+
+        <section id="array-stack">
+            <h2>1. Triển khai bằng Mảng (Array Implementation)</h2>
+            <div class="code-window">
+                <div class="code-header">
+                    <div class="dot red"></div>
+                    <div class="dot yellow"></div>
+                    <div class="dot green"></div>
+                </div>
+                <pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdbool.h&gt;
+
+#define MAX 100
+
+typedef struct {
+    int data[MAX];
+    int top;
+} Stack;
+
+// Khoi tao Stack
+void init(Stack *s) {
+    s->top = -1;
+}
+
+// Kiem tra Stack rong
+bool isEmpty(Stack *s) {
+    return s->top == -1;
+}
+
+// Kiem tra Stack day
+bool isFull(Stack *s) {
+    return s->top == MAX - 1;
+}
+
+// Them phan tu vao Stack
+void push(Stack *s, int val) {
+    if (isFull(s)) {
+        printf("Stack Overflow!\n");
+        return;
+    }
+    s->data[++(s->top)] = val;
+}
+
+// Lay phan tu ra khoi Stack
+int pop(Stack *s) {
+    if (isEmpty(s)) {
+        printf("Stack Underflow!\n");
+        return -1;
+    }
+    return s->data[(s->top)--];
+}
+
+// Xem phan tu o dinh Stack
+int peek(Stack *s) {
+    if (isEmpty(s)) {
+        return -1;
+    }
+    return s->data[s->top];
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="group1-2">
+            <h2>BÀI TẬP: Đảo ngược chuỗi bằng Stack</h2>
+            <p><span class="tag tag-easy">Cơ bản</span> Sử dụng tính chất LIFO để đảo ngược một chuỗi ký tự.</p>
+            <div class="code-window">
+                <div class="code-header"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+                <pre><code class="language-c">#include &lt;string.h&gt;
+
+void reverseString(char str[]) {
+    Stack s;
+    init(&s);
+    int n = (int)strlen(str);
+    
+    // Day tung ky tu vao Stack
+    for(int i = 0; i < n; i++) {
+        push(&s, (int)str[i]);
+    }
+    
+    // Lay ra de dao nguoc
+    for(int i = 0; i < n; i++) {
+        str[i] = (char)pop(&s);
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="group2-2">
+            <h2>BÀI TẬP: Đổi hệ thập phân sang nhị phân</h2>
+            <div class="note"><strong>Thuật toán:</strong> Chia số đó cho 2, lấy số dư đẩy vào Stack. Sau đó Pop lần lượt ra sẽ được số nhị phân đúng thứ tự.</div>
+            <div class="code-window">
+                <div class="code-header"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+                <pre><code class="language-c">void decToBin(int n) {
+    Stack s;
+    init(&s);
+    
+    if(n == 0) { 
+        printf("0"); 
+        return; 
+    }
+    
+    while(n > 0) {
+        push(&s, n % 2);
+        n /= 2;
+    }
+    
+    printf("Nhi phan: ");
+    while(!isEmpty(&s)) {
+        printf("%d", pop(&s));
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="group2-1">
+            <h2>BÀI TẬP: Kiểm tra dấu ngoặc hợp lệ</h2>
+            <p><span class="tag tag-med">Dạng bài thi phổ biến</span> Kiểm tra ( ) { } [ ] đúng quy tắc.</p>
+            <div class="code-window">
+                <div class="code-header"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+                <pre><code class="language-c">#include &lt;string.h&gt;
+
+bool isMatchingPair(char char1, char char2) {
+    if (char1 == '(' && char2 == ')') return true;
+    if (char1 == '{' && char2 == '}') return true;
+    if (char1 == '[' && char2 == ']') return true;
+    return false;
+}
+
+bool areParenthesesBalanced(char exp[]) {
+    Stack s;
+    init(&s);
+    int len = (int)strlen(exp);
+    
+    for (int i = 0; i < len; i++) {
+        if (exp[i] == '{' || exp[i] == '(' || exp[i] == '[') {
+            push(&s, (int)exp[i]);
+        }
+        if (exp[i] == '}' || exp[i] == ')' || exp[i] == ']') {
+            if (isEmpty(&s)) return false;
+            if (!isMatchingPair((char)pop(&s), exp[i])) return false;
+        }
+    }
+    return isEmpty(&s);
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="exam-1">
+            <h2>🎯 ĐỀ THI MẪU SỐ 01 (CÓ ĐÁP ÁN CHI TIẾT)</h2>
+            <p><strong>Câu 1:</strong> Cho Stack rỗng. Thực hiện các thao tác sau: <code>Push(5), Push(10), Pop(), Push(15), Push(20), Pop()</code>. Giá trị tại đỉnh Stack (Top) lúc này là bao nhiêu? Liệt kê các phần tử còn lại trong Stack.</p>
+            <p>👉 <strong>Đáp án:</strong> 
+                <br>1. Push(5) -> [5]
+                <br>2. Push(10) -> [5, 10]
+                <br>3. Pop() -> lấy 10 ra, còn [5]
+                <br>4. Push(15) -> [5, 15]
+                <br>5. Push(20) -> [5, 15, 20]
+                <br>6. Pop() -> lấy 20 ra, còn [5, 15]
+                <br>=> <strong>Giá trị Top hiện tại: 15.</strong> Các phần tử còn lại: 5 (dưới), 15 (trên).
+            </p>
+
+            <p><strong>Câu 2:</strong> Viết hàm đếm phần tử trong Stack mà không làm thay đổi nội dung Stack ban đầu.</p>
+            <div class="code-window">
+                <div class="code-header"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+                <pre><code class="language-c">// Giai thich: Trong C, khi truyen tham tri (Stack s), 
+// mot ban sao cua Stack duoc tao ra trong vung nho Stack cua ham.
+int countElements(Stack s) { 
+    int count = 0;
+    while (!isEmpty(&s)) {
+        pop(&s);
+        count++;
+    }
+    return count;
+}</code></pre>
+            </div>
+
+            <p><strong>Câu 3:</strong> Trình bày cài đặt Stack bằng Danh sách liên kết đơn (Linked List).</p>
+            <div class="code-window">
+                <div class="code-header"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+                <pre><code class="language-c">#include &lt;stdlib.h&gt;
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node* top;
+} LinkedStack;
+
+void initLinkedStack(LinkedStack *s) {
+    s->top = NULL;
+}
+
+bool isLinkedStackEmpty(LinkedStack *s) {
+    return s->top == NULL;
+}
+
+void pushLinkedStack(LinkedStack *s, int x) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        printf("Khong the cap phat bo nho!\n");
+        return;
+    }
+    newNode->data = x;
+    newNode->next = s->top;
+    s->top = newNode;
+}
+
+int popLinkedStack(LinkedStack *s) {
+    if (isLinkedStackEmpty(s)) {
+        return -1;
+    }
+    Node* temp = s->top;
+    int val = temp->data;
+    s->top = s->top->next;
+    free(temp);
+    return val;
+}</code></pre>
+            </div>
+        </section>
+
+        <footer class="sc-contact-footer">
+            <div class="sc-footer-container">
+                <div style="color: #9ca3af; font-size: 14px;">Design by <span style="font-weight:bold; color:#58a6ff;">Sơn Cris</span></div>
+                <div style="display: flex; gap: 10px;">
+                    <a href="tel:0327208690" class="sc-social-btn btn-phone"><i class="fas fa-phone-alt"></i></a>
+                    <a href="https://web.facebook.com/sonsadboiz.12" class="sc-social-btn btn-facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="sc-social-btn btn-tiktok"><i class="fab fa-tiktok"></i></a>
+                    <a href="#" class="sc-social-btn btn-instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const newTheme = body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        window.onload = () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
+
+            document.querySelectorAll('.code-window').forEach(windowEl => {
+                const button = document.createElement('button');
+                button.innerText = 'Copy';
+                button.className = 'copy-btn';
+                button.onclick = () => {
+                    const code = windowEl.querySelector('code').innerText;
+                    const el = document.createElement('textarea');
+                    el.value = code;
+                    document.body.appendChild(el);
+                    el.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(el);
+                    button.innerText = '✅ Xong!';
+                    setTimeout(() => button.innerText = 'Copy', 2000);
+                };
+                windowEl.appendChild(button);
+            });
+        };
+
+        document.querySelectorAll('aside a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
