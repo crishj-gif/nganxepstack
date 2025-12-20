@@ -3,18 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ngăn xếp (Stack)</title>
+    <title>Tài liệu Ôn thi Ngăn xếp (Stack) - Phiên bản Giáng Sinh</title>
     <!-- Prism.js for Dracula Theme Syntax Highlighting -->
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
     <style>
         :root {
+            /* Christmas Theme Colors */
+            --christmas-red: #D42426; /* Đỏ đô */
+            --pine-green: #165B33;    /* Xanh lá thông */
+            --snow-color: #FFF;
+            
             --bg-color: #ffffff;
-            --sidebar-bg: #f5f7f9;
+            --sidebar-bg: #f8fff9; /* Phớt xanh nhẹ cho sidebar */
             --text-color: #24292e;
             --border-color: #e1e4e8;
-            --primary-color: #0366d6;
-            --code-bg: #282a36; /* Dracula background */
+            --primary-color: var(--christmas-red); /* Áp dụng màu đỏ làm màu chính */
+            --accent-color: var(--pine-green);
+            --code-bg: #282a36; 
             --header-bg: #ffffff;
             --mac-red: #ff5f56;
             --mac-yellow: #ffbd2e;
@@ -22,12 +28,13 @@
         }
 
         [data-theme="dark"] {
-            --bg-color: #0d1117;
-            --sidebar-bg: #161b22;
+            --bg-color: #0f1c15; /* Nền tối ánh xanh lá thông */
+            --sidebar-bg: #0a1410;
             --text-color: #c9d1d9;
             --border-color: #30363d;
-            --primary-color: #58a6ff;
-            --header-bg: #0d1117;
+            --primary-color: #ff6b6b; /* Đỏ sáng hơn cho dark mode */
+            --accent-color: #4ade80;
+            --header-bg: #0a1410;
         }
 
         * { box-sizing: border-box; }
@@ -39,7 +46,108 @@
             color: var(--text-color);
             line-height: 1.6;
             transition: background 0.3s;
+            overflow-x: hidden; /* Ngăn thanh cuộn ngang do tuyết */
         }
+
+        /* Snow Effect Container */
+        #snow-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden;
+        }
+
+        .snowflake {
+            position: absolute;
+            top: -10px;
+            color: var(--snow-color);
+            font-size: 1em;
+            opacity: 0.8;
+            user-select: none;
+            animation-name: fall;
+            animation-timing-function: linear;
+        }
+        /* Dark mode snow styling */
+        [data-theme="light"] .snowflake {
+            color: #b0c4de; /* Tuyết màu xanh nhạt trên nền trắng để dễ nhìn */
+            text-shadow: 0 0 2px rgba(0,0,0,0.1);
+        }
+
+        @keyframes fall {
+            to { transform: translateY(105vh); }
+        }
+
+        /* --- DECORATION ANIMATIONS --- */
+        
+        /* Santa Float Animation */
+        @keyframes santa-float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+
+        /* Tree Sway Animation */
+        @keyframes tree-sway {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+
+        /* Reindeer Bounce Animation */
+        @keyframes reindeer-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Cookie Wiggle Animation */
+        @keyframes cookie-wiggle {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(-15deg) scale(1.1); }
+            50% { transform: rotate(0deg) scale(1); }
+            75% { transform: rotate(15deg) scale(1.1); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+
+        /* Decorative Corners Styles */
+        .deco-corner {
+            position: fixed;
+            font-size: 3rem;
+            z-index: 10000; 
+            pointer-events: none;
+            opacity: 0.9;
+        }
+        
+        .deco-tl { top: 70px; left: 20px; font-size: 2rem; } 
+        
+        .deco-tr { 
+            top: 70px; right: 40px; 
+            animation: santa-float 4s ease-in-out infinite; /* Santa floats */
+        }
+        
+        .deco-bl { 
+            bottom: 80px; left: 20px; 
+            z-index: 999999; 
+            transform-origin: bottom center;
+            animation: tree-sway 3s ease-in-out infinite; /* Tree sways */
+        }
+        
+        .deco-br { 
+            bottom: 80px; right: 20px; 
+            z-index: 999999; 
+            animation: reindeer-bounce 2s ease-in-out infinite; /* Reindeer bounces */
+        }
+
+        .deco-cookie {
+            position: fixed; 
+            top: 100px; 
+            left: 220px; 
+            z-index: 1001; 
+            font-size: 1.5rem;
+            animation: cookie-wiggle 5s ease-in-out infinite; /* Cookie wiggles */
+        }
+
 
         /* Header */
         header {
@@ -47,17 +155,31 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 60px;
+            height: 65px;
             background: var(--header-bg);
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 3px solid var(--christmas-red); /* Viền đỏ Giáng sinh */
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 20px;
             z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        .logo { font-weight: bold; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
+        .logo { 
+            font-weight: bold; 
+            font-size: 1.2rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            color: var(--pine-green);
+        }
+        
+        .logo img {
+            height: 42px;
+            width: auto;
+            object-fit: contain;
+        }
 
         /* Sidebar */
         aside {
@@ -69,51 +191,85 @@
             position: fixed;
             overflow-y: auto;
             transition: transform 0.3s;
+            scrollbar-width: thin;
         }
 
-        aside h3 { font-size: 0.9rem; text-transform: uppercase; color: #8b949e; margin-top: 25px; }
+        aside h3 { 
+            font-size: 0.9rem; 
+            text-transform: uppercase; 
+            color: var(--pine-green); /* Tiêu đề sidebar màu xanh thông */
+            margin-top: 25px; 
+            font-weight: 800;
+            border-bottom: 1px dashed var(--christmas-red);
+            padding-bottom: 5px;
+            display: inline-block;
+        }
         aside ul { list-style: none; padding: 0; }
-        aside li { margin: 8px 0; }
+        aside li { margin: 10px 0; }
         aside a {
             text-decoration: none;
             color: var(--text-color);
             font-size: 0.95rem;
             display: block;
-            padding: 5px 10px;
-            border-radius: 6px;
+            padding: 8px 15px;
+            border-radius: 20px; /* Bo tròn nút sidebar */
+            transition: all 0.2s;
+            border: 1px solid transparent;
         }
-        aside a:hover { background: rgba(0,0,0,0.05); }
-        [data-theme="dark"] aside a:hover { background: rgba(255,255,255,0.05); }
+        aside a:hover { 
+            background: rgba(212, 36, 38, 0.1); /* Hover màu đỏ nhạt */
+            color: var(--christmas-red);
+            transform: translateX(5px);
+            border-color: rgba(212, 36, 38, 0.2);
+        }
+        [data-theme="dark"] aside a:hover { 
+            background: rgba(255, 255, 255, 0.1); 
+            color: var(--primary-color);
+        }
 
         /* Main Content */
         main {
             flex: 1;
             margin-left: 280px;
-            padding: 100px 40px 60px;
-            max-width: 900px;
+            padding: 100px 40px 100px; /* Tăng padding bottom để tránh footer */
+            max-width: 950px;
         }
 
         section { margin-bottom: 60px; }
-        h1 { font-size: 2.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
-        h2 { font-size: 1.8rem; margin-top: 40px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; }
-        h3 { font-size: 1.3rem; margin-top: 30px; color: var(--primary-color); }
+        h1 { 
+            font-size: 2.5rem; 
+            border-bottom: 3px solid var(--christmas-red); 
+            padding-bottom: 10px; 
+            color: var(--christmas-red);
+        }
+        h2 { 
+            font-size: 1.8rem; 
+            margin-top: 40px; 
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 5px; 
+            color: var(--pine-green); /* Tiêu đề H2 màu xanh */
+        }
+        [data-theme="dark"] h2 { color: #81c784; }
 
-        /* Code Block Wrapper with Mac Buttons */
+        h3 { font-size: 1.3rem; margin-top: 30px; color: var(--christmas-red); }
+
+        /* Code Block Wrapper */
         .code-window {
             background: var(--code-bg);
-            border-radius: 10px;
+            border-radius: 20px; /* Bo tròn khung code */
             margin: 20px 0;
             box-shadow: 0 15px 35px rgba(0,0,0,0.4);
             overflow: hidden;
             position: relative;
+            border: 1px solid var(--border-color);
         }
 
         .code-header {
             background: #21222c;
-            height: 35px;
+            height: 40px;
             display: flex;
             align-items: center;
-            padding: 0 15px;
+            padding: 0 20px;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
@@ -130,20 +286,20 @@
         pre {
             background: transparent !important;
             margin: 0 !important;
-            padding: 15px !important;
+            padding: 20px !important;
             overflow-x: auto;
         }
         code { font-family: "Fira Code", "Cascadia Code", Consolas, monospace !important; font-size: 14px; }
         
         .copy-btn {
             position: absolute;
-            top: 7px;
+            top: 9px;
             right: 15px;
             background: rgba(255,255,255,0.1);
             color: #f8f8f2;
             border: 1px solid rgba(255,255,255,0.1);
-            padding: 2px 10px;
-            border-radius: 4px;
+            padding: 4px 12px;
+            border-radius: 15px; /* Bo tròn nút copy */
             cursor: pointer;
             font-size: 0.75rem;
             transition: background 0.2s;
@@ -152,24 +308,24 @@
 
         .tag {
             display: inline-block;
-            padding: 2px 8px;
-            border-radius: 12px;
+            padding: 4px 10px;
+            border-radius: 15px;
             font-size: 0.75rem;
             font-weight: bold;
             margin-right: 5px;
             background: #e1e4e8;
             color: #24292e;
         }
-        .tag-hard { background: #ff4444; color: white; }
+        .tag-hard { background: var(--christmas-red); color: white; }
         .tag-med { background: #ffbb33; color: white; }
-        .tag-easy { background: #00C851; color: white; }
+        .tag-easy { background: var(--pine-green); color: white; }
 
         .note {
             background: #fff3cd;
             border-left: 5px solid #ffecb5;
             padding: 15px;
             margin: 20px 0;
-            border-radius: 4px;
+            border-radius: 15px; /* Bo tròn note */
             color: #856404;
         }
         [data-theme="dark"] .note {
@@ -180,28 +336,46 @@
 
         .qa-box {
             background: #f8f9fa;
-            border: 1px solid var(--border-color);
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 20px; /* Bo tròn QA box */
+            transition: transform 0.2s;
         }
-        [data-theme="dark"] .qa-box { background: #1c2128; }
-        .question-text { font-weight: bold; color: var(--primary-color); display: block; margin-bottom: 5px; }
+        .qa-box:hover {
+            border-color: var(--pine-green);
+        }
+        [data-theme="dark"] .qa-box { background: #1c2128; border-color: #30363d; }
+        
+        .question-text { 
+            font-weight: bold; 
+            color: var(--christmas-red); /* Câu hỏi màu đỏ */
+            display: block; 
+            margin-bottom: 10px; 
+            font-size: 1.05rem;
+        }
+        [data-theme="dark"] .question-text { color: var(--primary-color); }
 
         .theme-switch {
             cursor: pointer;
-            padding: 8px 18px;
-            background: var(--primary-color);
+            padding: 8px 20px;
+            background: var(--pine-green); /* Nút theme màu xanh thông */
             color: white;
-            border-radius: 20px;
+            border-radius: 25px; /* Bo tròn nút theme */
             border: none;
             font-size: 0.9rem;
             font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: background 0.3s;
+        }
+        .theme-switch:hover {
+            background: #1e7e45;
         }
 
         @media (max-width: 768px) {
             aside { transform: translateX(-100%); width: 0; padding: 0; }
-            main { margin-left: 0; padding: 80px 20px; }
+            main { margin-left: 0; padding: 80px 20px 100px; }
+            .deco-corner, .deco-cookie { display: none; } /* Ẩn trang trí trên mobile để đỡ rối */
         }
         
         .sc-contact-footer {
@@ -210,11 +384,15 @@
             left: 0;
             width: 100%;
             z-index: 99999;
-            background: rgba(17, 24, 39, 0.85);
+            background: rgba(22, 91, 51, 0.95); /* Footer nền xanh thông */
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding: 10px 0;
+            color: white;
+        }
+        [data-theme="dark"] .sc-contact-footer {
+            background: rgba(17, 24, 39, 0.95);
         }
 
         .sc-footer-container {
@@ -236,8 +414,10 @@
             text-decoration: none;
             color: white;
             transition: transform 0.3s;
+            background: rgba(255,255,255,0.2); /* Nền icon mờ */
         }
-        .sc-social-btn:hover { transform: scale(1.1); }
+        .sc-social-btn:hover { transform: scale(1.1); background: rgba(255,255,255,0.4); }
+        /* Giữ nguyên màu gốc của icon nếu muốn, hoặc dùng style chung ở trên */
         .btn-phone { background: #4ade80; }
         .btn-facebook { background: #18ACFE; }
         .btn-tiktok { background: #000; border: 1px solid #fff; }
@@ -245,13 +425,28 @@
     </style>
 </head>
 <body data-theme="light">
+    
+    <!-- Snow Container -->
+    <div id="snow-container"></div>
+
+    <!-- Decorative Corners with Animations -->
+    <!-- Top Right (gần theme switch) -->
+    <div class="deco-corner deco-tr">🎅</div>
+    <!-- Bottom Left (gần footer) -->
+    <div class="deco-corner deco-bl">🎄</div>
+    <!-- Bottom Right (gần footer) -->
+    <div class="deco-corner deco-br">🦌</div>
+    <!-- Top Left (dưới logo một chút trong nội dung sidebar) -->
+    <div class="deco-cookie">🍪</div>
+
 
     <header>
         <div class="logo">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8 4 8-4M4 15l8 4 8-4M12 3l8 4-8 4-8-4 8-4z"/></svg>
-            <span>Stack Pro</span>
+            <!-- Updated Logo MTA -->
+            <img src="https://upload.wikimedia.org/wikipedia/vi/0/0e/Logo_MTA_new.png" alt="MTA Logo">
+            <span>Stack Pro <span style="font-size: 0.8em; color: var(--christmas-red);">Xmas Edition</span></span>
         </div>
-        <button class="theme-switch" onclick="toggleTheme()">🌓 Chế độ sáng/tối</button>
+        <button class="theme-switch" onclick="toggleTheme()">🌓 Đổi chế độ</button>
     </header>
 
     <aside id="sidebar">
@@ -282,7 +477,7 @@
 
     <main>
         <section id="intro">
-            <h1> Ngăn xếp (Stack)</h1>
+            <h1>❄️ Ngăn xếp (Stack) ❄️</h1>
             <div class="note">
                 <strong>💡 Lưu ý quan trọng:</strong> Stack hoạt động theo cơ chế <strong>LIFO (Last In, First Out)</strong>. Nghĩa là phần tử nào vào sau cùng sẽ được lấy ra đầu tiên.
             </div>
@@ -542,7 +737,7 @@ int popLinkedStack(LinkedStack *s) {
 
         <footer class="sc-contact-footer">
             <div class="sc-footer-container">
-                <div style="color: #9ca3af; font-size: 14px;">Design by <span style="font-weight:bold; color:#58a6ff;">Sơn Cris</span></div>
+                <div style="color: #ffffff; font-size: 14px;">Design by <span style="font-weight:bold; color:#58a6ff;">Sơn Cris</span></div>
                 <div style="display: flex; gap: 10px;">
                     <a href="tel:0327208690" class="sc-social-btn btn-phone"><i class="fas fa-phone-alt"></i></a>
                     <a href="https://web.facebook.com/sonsadboiz.12" class="sc-social-btn btn-facebook"><i class="fab fa-facebook-f"></i></a>
@@ -556,6 +751,33 @@ int popLinkedStack(LinkedStack *s) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
     <script>
+        // Snow Effect Logic
+        function createSnowflake() {
+            const snowContainer = document.getElementById('snow-container');
+            const snowflake = document.createElement('div');
+            snowflake.classList.add('snowflake');
+            snowflake.innerHTML = '❄';
+            
+            // Random properties
+            const startLeft = Math.random() * window.innerWidth;
+            const animationDuration = Math.random() * 3 + 2; // 2-5s
+            const size = Math.random() * 10 + 10; // 10-20px
+            
+            snowflake.style.left = startLeft + 'px';
+            snowflake.style.animationDuration = animationDuration + 's';
+            snowflake.style.fontSize = size + 'px';
+            
+            snowContainer.appendChild(snowflake);
+            
+            // Remove after animation
+            setTimeout(() => {
+                snowflake.remove();
+            }, animationDuration * 1000);
+        }
+
+        // Create snow frequently
+        setInterval(createSnowflake, 100);
+
         function toggleTheme() {
             const body = document.body;
             const newTheme = body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
@@ -597,5 +819,4 @@ int popLinkedStack(LinkedStack *s) {
         });
     </script>
 </body>
-
 </html>
