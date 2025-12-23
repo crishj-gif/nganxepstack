@@ -28,16 +28,18 @@
         }
 
         [data-theme="dark"] {
-            --bg-color: #0f1c15; /* Nền tối ánh xanh lá thông */
-            --sidebar-bg: #0a1410;
-            --text-color: #c9d1d9;
+            /* Nền mặc định cho dark mode (sẽ bị ghi đè bởi hiệu ứng cực quang ở body) */
+            --bg-color: #0f1c15; 
+            --sidebar-bg: rgba(10, 20, 16, 0.8); /* Làm mờ sidebar để thấy cực quang */
+            --text-color: #e6edf3;
             --border-color: #30363d;
             --primary-color: #ff6b6b; /* Đỏ sáng hơn cho dark mode */
             --accent-color: #4ade80;
-            --header-bg: #0a1410;
+            --header-bg: rgba(10, 20, 16, 0.9);
         }
 
         * { box-sizing: border-box; }
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
             margin: 0;
@@ -45,8 +47,29 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             line-height: 1.6;
-            transition: background 0.3s;
+            transition: background 0.5s ease;
             overflow-x: hidden; /* Ngăn thanh cuộn ngang do tuyết */
+            min-height: 100vh;
+        }
+
+        /* --- AURORA BOREALIS EFFECT (DARK MODE ONLY) --- */
+        [data-theme="dark"] body {
+            background: linear-gradient(
+                125deg, 
+                #000000 0%, 
+                #0b1026 25%, 
+                #1a0b2e 50%, 
+                #0f2e18 75%, 
+                #000000 100%
+            );
+            background-size: 400% 400%;
+            animation: aurora-bg 15s ease infinite;
+        }
+
+        @keyframes aurora-bg {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         /* Snow Effect Container */
@@ -164,6 +187,7 @@
             padding: 0 20px;
             z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            backdrop-filter: blur(5px);
         }
 
         .logo { 
@@ -192,6 +216,7 @@
             overflow-y: auto;
             transition: transform 0.3s;
             scrollbar-width: thin;
+            backdrop-filter: blur(5px);
         }
 
         aside h3 { 
@@ -329,7 +354,7 @@
             color: #856404;
         }
         [data-theme="dark"] .note {
-            background: #1e1e13;
+            background: rgba(30, 30, 19, 0.8);
             border-left: 5px solid #d4a017;
             color: #d4a017;
         }
@@ -345,7 +370,7 @@
         .qa-box:hover {
             border-color: var(--pine-green);
         }
-        [data-theme="dark"] .qa-box { background: #1c2128; border-color: #30363d; }
+        [data-theme="dark"] .qa-box { background: rgba(28, 33, 40, 0.8); border-color: #30363d; }
         
         .question-text { 
             font-weight: bold; 
@@ -422,10 +447,118 @@
         .btn-facebook { background: #18ACFE; }
         .btn-tiktok { background: #000; border: 1px solid #fff; }
         .btn-instagram { background: linear-gradient(45deg, #833ab4, #fd1d1d, #fcb045); }
+
+        /* --- POPUP MODAL STYLES --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10001; /* Higher than corners */
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            position: relative;
+            max-width: 500px;
+            width: 90%;
+            border: 4px solid var(--christmas-red);
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.5);
+            animation: modal-pop 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            background-image: 
+                radial-gradient(#d42426 1px, transparent 1px),
+                radial-gradient(#165b33 1px, transparent 1px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            background-color: #fff;
+        }
+
+        @keyframes modal-pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-inner {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px dashed var(--pine-green);
+        }
+
+        .modal-title {
+            color: var(--christmas-red);
+            font-size: 2rem;
+            margin-bottom: 15px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .modal-msg {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        .modal-close-btn {
+            background: var(--pine-green);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            box-shadow: 0 4px 15px rgba(22, 91, 51, 0.4);
+        }
+        .modal-close-btn:hover {
+            background: var(--christmas-red);
+            transform: scale(1.05);
+        }
+
+        .modal-deco {
+            font-size: 3rem;
+            position: absolute;
+            animation: bounce 2s infinite;
+        }
+        .md-tl { top: -20px; left: -20px; transform: rotate(-15deg); }
+        .md-tr { top: -20px; right: -20px; transform: rotate(15deg); }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
     </style>
 </head>
 <body data-theme="light">
     
+    <!-- POPUP MODAL -->
+    <div class="modal-overlay" id="welcomeModal">
+        <div class="modal-content">
+            <span class="modal-deco md-tl">🎄</span>
+            <span class="modal-deco md-tr">🎅</span>
+            <div class="modal-inner">
+                <h2 class="modal-title">Giáng Sinh An Lành!</h2>
+                <p class="modal-msg">🎁 Chúc bạn thi tốt Kỹ thuật lập trình 🎁</p>
+                <button class="modal-close-btn" onclick="closeModal()">Cảm ơn & Vào học thôi!</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Snow Container -->
     <div id="snow-container"></div>
 
@@ -467,6 +600,7 @@
             <li><a href="#group2-1">2.1. Kiểm tra dấu ngoặc</a></li>
             <li><a href="#group2-2">2.2. Đổi nhị phân</a></li>
             <li><a href="#group2-3">2.3. Chuyển đổi biểu thức</a></li>
+            <li><a href="#group2-4">2.4. Trung tố sang Hậu tố</a></li>
         </ul>
         <h3>Đề thi & Đáp án</h3>
         <ul>
@@ -661,6 +795,91 @@ bool areParenthesesBalanced(char exp[]) {
             </div>
         </section>
 
+        <!-- ADDED SECTION 2.4 -->
+        <section id="group2-4">
+            <h2>2.4. Chuyển đổi biểu thức Trung tố sang Hậu tố</h2>
+            <p><span class="tag tag-hard">Nâng cao</span> Chuyển từ Infix (A + B) sang Postfix (A B +) sử dụng Stack.</p>
+            
+            <div class="note">
+                <strong>Quy tắc ưu tiên toán tử:</strong><br>
+                1. Dấu <code>^</code> (Mũ) - Ưu tiên cao nhất.<br>
+                2. Dấu <code>*</code> và <code>/</code>.<br>
+                3. Dấu <code>+</code> và <code>-</code> - Ưu tiên thấp nhất.<br>
+                <em>(Dấu ngoặc đơn <code>( )</code> dùng để gom nhóm, có quy tắc xử lý riêng).</em>
+            </div>
+
+            <div class="code-window">
+                <div class="code-header"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+                <pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;ctype.h&gt;
+#include &lt;stdlib.h&gt;
+
+// Ham lay do uu tien cua toan tu
+int precedence(char op) {
+    if (op == '+' || op == '-') return 1;
+    if (op == '*' || op == '/') return 2;
+    if (op == '^') return 3;
+    return 0;
+}
+
+// Ham kiem tra xem ky tu co phai la toan tu khong
+int isOperator(char c) {
+    return (c == '+' || c == '-' || c == '*' || c == '/' || c == '^');
+}
+
+// Ham chuyen Infix sang Postfix
+void infixToPostfix(char* infix, char* postfix) {
+    Stack s;
+    init(&s);
+    int i = 0, k = 0;
+    char token;
+    
+    while ((token = infix[i++]) != '\0') {
+        // Neu la toan hang (chu hoac so), them vao ket qua
+        if (isalnum(token)) {
+            postfix[k++] = token;
+        }
+        // Neu la dau mo ngoac '(', day vao Stack
+        else if (token == '(') {
+            push(&s, token);
+        }
+        // Neu la dau dong ngoac ')', pop Stack cho den khi gap '('
+        else if (token == ')') {
+            while (!isEmpty(&s) && peek(&s) != '(') {
+                postfix[k++] = pop(&s);
+            }
+            if (!isEmpty(&s) && peek(&s) == '(') {
+                pop(&s); // Loai bo dau '('
+            }
+        }
+        // Neu la toan tu (+, -, *, /)
+        else if (isOperator(token)) {
+            while (!isEmpty(&s) && precedence(peek(&s)) >= precedence(token)) {
+                postfix[k++] = pop(&s);
+            }
+            push(&s, token);
+        }
+    }
+    
+    // Pop tat ca cac phan tu con lai trong Stack
+    while (!isEmpty(&s)) {
+        postfix[k++] = pop(&s);
+    }
+    postfix[k] = '\0'; // Ket thuc chuoi
+}
+
+// Vi du su dung
+// int main() {
+//     char infix[] = "A*(B+C)-D";
+//     char postfix[100];
+//     infixToPostfix(infix, postfix);
+//     printf("Postfix: %s", postfix); // Output: ABC+*D-
+//     return 0;
+// }</code></pre>
+            </div>
+        </section>
+
         <section id="exam-1">
             <h2>🎯 ĐỀ THI MẪU SỐ 01 (CÓ ĐÁP ÁN CHI TIẾT)</h2>
             <p><strong>Câu 1:</strong> Cho Stack rỗng. Thực hiện các thao tác sau: <code>Push(5), Push(10), Pop(), Push(15), Push(20), Pop()</code>. Giá trị tại đỉnh Stack (Top) lúc này là bao nhiêu? Liệt kê các phần tử còn lại trong Stack.</p>
@@ -785,7 +1004,23 @@ int popLinkedStack(LinkedStack *s) {
             localStorage.setItem('theme', newTheme);
         }
 
+        // --- POPUP LOGIC ---
+        function showModal() {
+            const modal = document.getElementById('welcomeModal');
+            // Check if user has already seen it this session? 
+            // For now, let's show it every refresh as requested for testing
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('welcomeModal');
+            modal.classList.remove('active');
+        }
+
         window.onload = () => {
+            // Show Popup after a slight delay
+            setTimeout(showModal, 500);
+
             const savedTheme = localStorage.getItem('theme') || 'light';
             document.body.setAttribute('data-theme', savedTheme);
 
